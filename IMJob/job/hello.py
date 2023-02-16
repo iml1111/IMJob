@@ -1,4 +1,3 @@
-import asyncio
 from job import Job
 import time
 

@@ -3,7 +3,6 @@ import asyncio
 import pkgutil
 from typing import List
 from multiprocessing import Process
-import subprocess
 import typer
 from controller.job.typer_callback import job_context_callback
 from model.appmodel.job import JobPlan
@@ -38,6 +37,10 @@ def run(
     if workers < 2:
         # Single Process
         for job, job_plan in zip(jobs, job_plans):
+            typer.secho(
+                f"Job[{os.getpid()}-{job.__class__.__name__}] started.",
+                fg=typer.colors.GREEN
+            )
             asyncio.run(job.run(*job_plan.args, **job_plan.kwargs))
     else:
         # Multi Process
@@ -55,7 +58,10 @@ def run(
                 kwargs=job_plan.kwargs,
             )
             process.start()
-            typer.secho(f"Process {process.pid} started.", fg=typer.colors.GREEN)
+            typer.secho(
+                f"Job[{process.pid}-{job.__class__.__name__}] started.",
+                fg=typer.colors.GREEN
+            )
             processes.append(process)
 
 
