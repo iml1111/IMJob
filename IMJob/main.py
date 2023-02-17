@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.table import Table
 from controller.job.typer_callback import job_context_callback
 from controller.job.util import Timer
-from model.appmodel.job import JobPlan
+from model.appmodel.job_plan import JobPlan
 import job
 for _, name, _ in pkgutil.iter_modules([os.path.dirname(job.__file__)]):
     exec(f"from job.{name} import *")
@@ -32,23 +32,22 @@ def run(
     > run Job:HelloWorld arg1 arg2 kwarg1=value1 kwarg2=value2
     """
     job_plans: List[JobPlan] = job_context
-    jobs = []
-    for job_plan in job_plans:
+    for plan in job_plans:
         try:
-            jobs.append(eval(job_plan.name)())
+            plan.job = eval(plan.name)()
         except NameError as e:
             typer.secho(
-                f"Job[{job_plan.name}] is not found.",
+                f"Job[{plan.name}] is not found.",
                 fg=typer.colors.RED
             )
             raise typer.Abort()
 
-    if len(jobs) == 0:
+    if len(job_plans) == 0:
         typer.secho("No job is found.", fg=typer.colors.YELLOW)
         raise typer.Abort()
 
-    if workers > len(jobs):
-        workers = len(jobs)
+    if workers > len(job_plans):
+        workers = len(job_plans)
         if verbose:
             typer.secho(
                 f"Number of workers is greater than number of jobs. "
@@ -57,38 +56,38 @@ def run(
 
     if workers < 2:
         # Single Process
-        for job, job_plan in zip(jobs, job_plans):
+        for plan in job_plans:
             if verbose:
                 typer.secho(
-                    f"Job[{os.getpid()}-{job.__class__.__name__}] started.",
+                    f"Job[{os.getpid()}-{plan.job.__class__.__name__}] started.",
                     fg=typer.colors.GREEN)
             with timer:
-                asyncio.run(job.run(*job_plan.args, **job_plan.kwargs))
+                asyncio.run(plan.job.run(*plan.args, **plan.kwargs))
     else:
         # Multi Process
         processes = []
         with timer:
-            for job, job_plan in zip(jobs, job_plans):
-                if len(processes) == workers:
-                    for process in processes:
-                        process.join()
-                    processes = []
-
+            for plan in job_plans:
                 process = Process(
-                    target=job.execute,
-                    args=job_plan.args,
-                    kwargs=job_plan.kwargs,
+                    target=plan.job.execute,
+                    args=plan.args,
+                    kwargs=plan.kwargs,
                 )
                 process.start()
                 processes.append(process)
                 if verbose:
                     typer.secho(
-                        f"Job[{process.pid}-{job.__class__.__name__}] started.",
+                        f"Job[{process.pid}-{plan.job.__class__.__name__}] started.",
                         fg=typer.colors.GREEN)
+
+                if len(processes) == workers:
+                    for process in processes:
+                        process.join()
+                    processes = []
 
     if verbose:
         typer.secho(
-            f"Total elapsed time: {timer.elapsed:.2f} seconds.",
+            f"Total elapsed time: {timer.elapsed:.3f} seconds.",
             fg=typer.colors.GREEN)
 
 

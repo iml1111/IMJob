@@ -7,6 +7,7 @@ Boilerplate for Scalable Python Job Workers
 - 각 잡을 멀티프로세싱 지원하기 V
 - 여러 잡을 입력했을때, 병렬 실행, 순차 실행 지원하기 V
 - 시간초 세주기 (미들웨어) V
+- 전체적인 리팩토링
 - Dockerize
 - 미들웨어 인터페이스
 

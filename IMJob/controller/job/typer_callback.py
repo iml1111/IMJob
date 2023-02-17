@@ -1,6 +1,6 @@
 from typing import List
 from typer import BadParameter
-from model.appmodel.job import JobPlan
+from model.appmodel.job_plan import JobPlan
 
 
 def job_context_callback(job_context: List[str]) -> List[JobPlan]:

@@ -1,11 +1,13 @@
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Type, Optional
 from pydantic import BaseModel, validator
+from job import Job
 
 
 class JobPlan(BaseModel):
     name: str
     args: List[Any]
     kwargs: Dict[str, Any] = {}
+    job: Optional[Type[Job]] = None
 
     @validator("name")
     def name_valid(cls, name: str):
