@@ -66,6 +66,7 @@ First of all, you must implement the job you want to register by inheriting the 
 
 - You must implement the `run` method, and it must be an `async` function.
 - You can override the `__init__` method to reuse variables inside the instance, but you cannot receive additional arguments from the `__init__` method. (receive all arguments from the `run` method)
+- Jobs must be defined in modules within the `/job` package.
 ```python
 # job/hello.py
 from job import Job
