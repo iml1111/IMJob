@@ -15,7 +15,7 @@ def single_process(
     for plan in job_plans:
         if verbose:
             typer.secho(
-                f"Job[{os.getpid()}-{plan.job.__class__.__name__}] started.",
+                f"[Worker-{os.getpid()}] started Job[{plan.name}].",
                 fg=typer.colors.GREEN)
         with timer:
             plan.job.execute(*plan.args, **plan.kwargs)

@@ -1,5 +1,7 @@
 from typing import List
+import typer
 from typer import BadParameter
+from controller.job.worker_count import get_worker_count
 from model.appmodel.job_plan import JobPlan
 
 
@@ -36,3 +38,9 @@ def job_context_callback(job_context: List[str]) -> List[JobPlan]:
             kwargs=job_kwargs))
 
     return job_requests
+
+
+def worker_count_callback(workers: int) -> int:
+    if workers == 0:
+        workers = get_worker_count()
+    return workers

@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 import os
 import pkgutil
 from typing import List
 import typer
 from rich.console import Console
 from rich.table import Table
-from controller.job.typer_callback import job_context_callback
+from controller.job.typer_callback import job_context_callback, worker_count_callback
 from controller.job.util import Timer
 from controller.job.process_executor import single_process, multi_process
 from model.appmodel.job_plan import JobPlan
@@ -23,7 +24,10 @@ def run(
         ..., help="Job Context",
         callback=job_context_callback
     ),
-    workers: int = typer.Option(3, help="Number of workers"),
+    workers: int = typer.Option(
+        0, help="Number of workers, (0=auto)",
+        callback=worker_count_callback
+    ),
     verbose: bool = typer.Option(True, help="Verbose mode"),
 ):
     """
@@ -45,12 +49,11 @@ def run(
         raise typer.Abort()
 
     if workers > len(job_plans):
-        workers = len(job_plans)
         if verbose:
             typer.secho(
-                f"Number of workers is greater than number of jobs. "
-                f"Number of workers is set to {workers}.",
+                f"workers({workers}) is greater than number of jobs. Set to {len(job_plans)}.",
                 fg=typer.colors.YELLOW)
+        workers = len(job_plans)
 
     if workers < 2:
         single_process(job_plans, timer, verbose)
