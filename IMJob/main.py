@@ -1,13 +1,12 @@
 import os
-import asyncio
 import pkgutil
 from typing import List
-from multiprocessing import Process
 import typer
 from rich.console import Console
 from rich.table import Table
 from controller.job.typer_callback import job_context_callback
 from controller.job.util import Timer
+from controller.job.process_executor import single_process, multi_process
 from model.appmodel.job_plan import JobPlan
 import job
 for _, name, _ in pkgutil.iter_modules([os.path.dirname(job.__file__)]):
@@ -38,8 +37,7 @@ def run(
         except NameError as e:
             typer.secho(
                 f"Job[{plan.name}] is not found.",
-                fg=typer.colors.RED
-            )
+                fg=typer.colors.RED)
             raise typer.Abort()
 
     if len(job_plans) == 0:
@@ -55,39 +53,14 @@ def run(
                 fg=typer.colors.YELLOW)
 
     if workers < 2:
-        # Single Process
-        for plan in job_plans:
-            if verbose:
-                typer.secho(
-                    f"Job[{os.getpid()}-{plan.job.__class__.__name__}] started.",
-                    fg=typer.colors.GREEN)
-            with timer:
-                asyncio.run(plan.job.run(*plan.args, **plan.kwargs))
+        single_process(job_plans, timer, verbose)
     else:
-        # Multi Process
-        processes = []
-        with timer:
-            for plan in job_plans:
-                process = Process(
-                    target=plan.job.execute,
-                    args=plan.args,
-                    kwargs=plan.kwargs,
-                )
-                process.start()
-                processes.append(process)
-                if verbose:
-                    typer.secho(
-                        f"Job[{process.pid}-{plan.job.__class__.__name__}] started.",
-                        fg=typer.colors.GREEN)
-
-                if len(processes) == workers:
-                    for process in processes:
-                        process.join()
-                    processes = []
+        multi_process(workers, job_plans, timer)
 
     if verbose:
         typer.secho(
-            f"Total elapsed time: {timer.elapsed:.3f} seconds.",
+            "Total elapsed time: "
+            f"{timer.elapsed:.3f} seconds.",
             fg=typer.colors.GREEN)
 
 

@@ -7,10 +7,10 @@ Boilerplate for Scalable Python Job Workers
 - 각 잡을 멀티프로세싱 지원하기 V
 - 여러 잡을 입력했을때, 병렬 실행, 순차 실행 지원하기 V
 - 시간초 세주기 (미들웨어) V
-- 싱글 프로세스, 멀티프로세스 파사드
-- 전체적인 리팩토링
+- async queue 도전 V
+- 싱글 프로세스, 멀티프로세스 파사드 V
+- 전체적인 리팩토링 V
 - Dockerize
-- 미들웨어 인터페이스
 
 # References
 - https://typer.tiangolo.com/typer-cli/

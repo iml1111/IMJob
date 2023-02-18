@@ -20,8 +20,11 @@ class SlowWork(Job):
         print(f"Slow Work {sec}!")
 
 
+class BadWork(Job):
+
+    async def run(self):
+        1 / 0
+
+
 if __name__ == "__main__":
-    a = HelloWorld()
-    a.execute()
-    b = SlowWork()
-    b.execute(3)
+    pass
