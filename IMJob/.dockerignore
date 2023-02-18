@@ -1,0 +1,7 @@
+.dockerignore
+Dockerfile
+.idea
+.python-version
+*.env
+.env
+*.yml
