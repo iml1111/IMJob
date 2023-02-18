@@ -58,7 +58,7 @@ def run(
     if workers < 2:
         single_process(job_plans, timer, verbose)
     else:
-        multi_process(workers, job_plans, timer)
+        multi_process(workers, job_plans, timer, verbose)
 
     if verbose:
         typer.secho(

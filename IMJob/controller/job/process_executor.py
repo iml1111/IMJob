@@ -25,6 +25,7 @@ def multi_process(
     workers: int,
     job_plans: List[JobPlan],
     timer: Timer,
+    verbose: bool = True,
 ):
     q = Queue()
     for plan in job_plans:
@@ -32,6 +33,6 @@ def multi_process(
     for _ in range(workers):
         q.put(None)
     with timer:
-        consumers = create_consumers(q, workers)
+        consumers = create_consumers(q, workers, verbose)
         for consumer in consumers:
             consumer.join()
