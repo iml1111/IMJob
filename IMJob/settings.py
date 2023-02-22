@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     contact_email: str = "shin10256@gmail.com"
 
     class Config:
-        env_file = ".env"
+        env_file = BASE_DIR + "/.env"
         env_file_encoding = "utf-8"
 
 
