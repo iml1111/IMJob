@@ -1,4 +1,5 @@
 import time
+from typing import Any
 
 
 class Timer:
@@ -18,28 +19,12 @@ class Timer:
             self.elapsed += (time.time() - self.start)
 
 
-def convert_param(param: str, annotation):
-    if annotation is int:
-        try:
-            return int(param), True
-        except (ValueError, TypeError):
-            return param, False
-
-    elif annotation is float:
-        try:
-            return float(param), True
-        except (ValueError, TypeError):
-            return param, False
-
-    elif (
-        annotation is bool and
-        param.lower() in ('true', 'false')
-    ):
-        return param.lower() == 'true', True
-
-    return param, False
+def convert_param(param: str, annotation: Any):
+    try:
+        return annotation(param), True
+    except (TypeError, ValueError):
+        return param, False
 
 
 if __name__ == '__main__':
-    param, ok = convert_param('1', int)
-    print(param, ok)
+    pass

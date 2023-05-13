@@ -1,5 +1,6 @@
 from job import Job
 import time
+from controller.job.util import convert_param
 
 
 class HelloWorld(Job):
@@ -16,6 +17,9 @@ class HelloWorld(Job):
 class SlowWork(Job):
 
     async def run(self, sec: int = 1):
+        sec, ok = convert_param(sec, int)
+        if not ok:
+            raise ValueError(f"Invalid param: sec={sec}")
         time.sleep(sec)
         print(f"Slow Work {sec}!")
 
