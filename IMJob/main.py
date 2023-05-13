@@ -15,7 +15,7 @@ for _, name, _ in pkgutil.iter_modules([os.path.dirname(job.__file__)]):
 
 app = typer.Typer()
 console = Console()
-timer = Timer()
+job_timer = Timer()
 
 
 @app.command()
@@ -29,6 +29,7 @@ def run(
         callback=worker_count_callback
     ),
     verbose: bool = typer.Option(True, help="Verbose mode"),
+    timer: bool = typer.Option(True, help="Timer mode"),
 ):
     """
     # Job Context Sample
@@ -55,15 +56,16 @@ def run(
                 fg=typer.colors.YELLOW)
         workers = len(job_plans)
 
+    job_timer.enabled = timer
     if workers < 2:
-        single_process(job_plans, timer, verbose)
+        single_process(job_plans, job_timer, verbose)
     else:
-        multi_process(workers, job_plans, timer, verbose)
+        multi_process(workers, job_plans, job_timer, verbose)
 
-    if verbose:
+    if verbose and timer:
         typer.secho(
             "Total elapsed time: "
-            f"{timer.elapsed:.3f} seconds.",
+            f"{job_timer.elapsed:.3f} seconds.",
             fg=typer.colors.GREEN)
 
 

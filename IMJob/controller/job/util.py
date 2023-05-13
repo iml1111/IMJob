@@ -3,16 +3,19 @@ import time
 
 class Timer:
 
-    def __init__(self):
+    def __init__(self, enabled: bool = True):
         self.elapsed = 0
         self.start = 0
+        self.enabled = enabled
 
     def __enter__(self):
-        self.start = time.time()
+        if self.enabled:
+            self.start = time.time()
         return self
 
     def __exit__(self, *args):
-        self.elapsed += (time.time() - self.start)
+        if self.enabled:
+            self.elapsed += (time.time() - self.start)
 
 
 def convert_param(param: str, annotation):
