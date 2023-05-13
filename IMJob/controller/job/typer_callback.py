@@ -1,5 +1,4 @@
 from typing import List
-import typer
 from typer import BadParameter
 from controller.job.worker_count import get_worker_count
 from model.appmodel.job_plan import JobPlan

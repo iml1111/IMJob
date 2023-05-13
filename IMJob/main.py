@@ -1,22 +1,36 @@
 #!/usr/bin/env python
 import os
+import sys
 import pkgutil
 from typing import List
 import typer
+from loguru import logger
 from rich.console import Console
 from rich.table import Table
 from controller.job.typer_callback import job_context_callback, worker_count_callback
 from controller.job.util import Timer
 from controller.job.process_executor import single_process, multi_process
 from model.appmodel.job_plan import JobPlan
+from settings import settings
 import job
 for _, name, _ in pkgutil.iter_modules([os.path.dirname(job.__file__)]):
     exec(f"from job.{name} import *")
 
-app = typer.Typer()
+app = typer.Typer(
+    pretty_exceptions_short=False,
+    pretty_exceptions_enable=settings.typer_pretty_exceptions,
+)
 console = Console()
 job_timer = Timer()
 
+logger_format = (
+    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>|"
+    "<level>{level: <8}</level>|"
+    "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan>|"
+    " <level>{message}</level>"
+)
+logger.remove()
+logger.add(sys.stdout, format=logger_format)
 
 @app.command()
 def run(
@@ -40,20 +54,19 @@ def run(
         try:
             plan.job = eval(plan.name)()
         except NameError as e:
-            typer.secho(
-                f"Job[{plan.name}] is not found.",
-                fg=typer.colors.RED)
+            logger.error(f"Job[{plan.name}] is not found.")
             raise typer.Abort()
 
     if len(job_plans) == 0:
-        typer.secho("No job is found.", fg=typer.colors.YELLOW)
+        logger.error("No job is found.")
         raise typer.Abort()
 
     if workers > len(job_plans):
         if verbose:
-            typer.secho(
-                f"workers({workers}) is greater than number of jobs. Set to {len(job_plans)}.",
-                fg=typer.colors.YELLOW)
+            logger.opt(colors=True).info(
+                f"<yellow>workers({workers})</yellow> is greater than number of jobs. "
+                f"<yellow>Set to {len(job_plans)}</yellow>."
+            )
         workers = len(job_plans)
 
     job_timer.enabled = timer
@@ -63,10 +76,10 @@ def run(
         multi_process(workers, job_plans, job_timer, verbose)
 
     if verbose and timer:
-        typer.secho(
+        logger.opt(colors=True).info(
             "Total elapsed time: "
-            f"{job_timer.elapsed:.3f} seconds.",
-            fg=typer.colors.GREEN)
+            f"<blue>{job_timer.elapsed:.3f} seconds</blue>.",
+        )
 
 
 @app.command()

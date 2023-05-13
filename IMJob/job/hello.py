@@ -1,5 +1,6 @@
 from job import Job
 import time
+from loguru import logger
 from controller.job.util import convert_param
 
 
@@ -10,8 +11,8 @@ class HelloWorld(Job):
         self.goodbye = "Goodbye World!"
 
     async def run(self, name: str = 'IML'):
-        print(f"Hello World and {name}!")
-        print(self.goodbye)
+        logger.info(f"Hello World and {name}!")
+        logger.info(self.goodbye)
 
 
 class SlowWork(Job):
@@ -21,7 +22,7 @@ class SlowWork(Job):
         if not ok:
             raise ValueError(f"Invalid param: sec={sec}")
         time.sleep(sec)
-        print(f"Slow Work {sec}!")
+        logger.info(f"Slow Work {sec}!")
 
 
 class BadWork(Job):

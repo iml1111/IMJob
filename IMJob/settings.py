@@ -3,7 +3,7 @@ from pydantic import BaseSettings, Field
 
 
 __AUTHOR__ = "IML"
-__VERSION__ = "0.1.1"
+__VERSION__ = "0.2.1"
 
 APP_NAME = "IMJob"
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     contact_name: str = __AUTHOR__
     contact_url: str = "https://github.com/iml1111"
     contact_email: str = "shin10256@gmail.com"
+    typer_pretty_exceptions: bool = True
 
     class Config:
         env_file = BASE_DIR + "/.env"

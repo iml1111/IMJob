@@ -1,6 +1,6 @@
 import os
 from multiprocessing import Queue
-import typer
+from loguru import logger
 from typing import List
 from controller.job.async_queue import create_consumers
 from model.appmodel.job_plan import JobPlan
@@ -14,9 +14,9 @@ def single_process(
 ):
     for plan in job_plans:
         if verbose:
-            typer.secho(
-                f"[Worker-{os.getpid()}] started Job[{plan.name}].",
-                fg=typer.colors.GREEN)
+            logger.opt(colors=True).info(
+                f"[Worker-{os.getpid()}] started <green>Job[{plan.name}]</green>.",
+            )
         with timer:
             plan.job.execute(*plan.args, **plan.kwargs)
 
