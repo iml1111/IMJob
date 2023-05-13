@@ -22,13 +22,13 @@ def convert_param(param: str, annotation):
     if annotation is int:
         try:
             return int(param), True
-        except ValueError:
+        except (ValueError, TypeError):
             return param, False
 
     elif annotation is float:
         try:
             return float(param), True
-        except ValueError:
+        except (ValueError, TypeError):
             return param, False
 
     elif (
