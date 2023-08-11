@@ -32,6 +32,7 @@ logger_format = (
 logger.remove()
 logger.add(sys.stdout, format=logger_format)
 
+
 @app.command()
 def run(
     job_context: List[str] = typer.Argument(

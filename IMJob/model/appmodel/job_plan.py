@@ -1,5 +1,5 @@
 from typing import List, Any, Dict, Type, Optional
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from job import Job
 
 
@@ -9,7 +9,8 @@ class JobPlan(BaseModel):
     kwargs: Dict[str, Any] = {}
     job: Optional[Type[Job]] = None
 
-    @validator("name")
+    @field_validator("name")
+    @classmethod
     def name_valid(cls, name: str):
         if name.startswith("Job:"):
             name = name[4:]
