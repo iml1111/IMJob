@@ -1,9 +1,10 @@
 import os
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 __AUTHOR__ = "IML"
-__VERSION__ = "0.2.1"
+__VERSION__ = "0.3.1"
 
 APP_NAME = "IMJob"
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -19,9 +20,10 @@ class Settings(BaseSettings):
     contact_email: str = "shin10256@gmail.com"
     typer_pretty_exceptions: bool = True
 
-    class Config:
-        env_file = BASE_DIR + "/.env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(
+        env_file=BASE_DIR + '/.env',
+        env_file_encoding='utf-8'
+    )
 
 
 settings = Settings()
