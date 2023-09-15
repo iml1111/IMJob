@@ -11,14 +11,18 @@ from controller.job.typer_callback import job_context_callback, worker_count_cal
 from controller.job.util import Timer
 from controller.job.process_executor import single_process, multi_process
 from model.appmodel.job_plan import JobPlan
-from settings import settings
+from settings import Settings
 import job
 for _, name, _ in pkgutil.iter_modules([os.path.dirname(job.__file__)]):
     exec(f"from job.{name} import *")
 
+
 app = typer.Typer(
     pretty_exceptions_short=False,
-    pretty_exceptions_enable=settings.typer_pretty_exceptions,
+    # Check before release
+    pretty_exceptions_enable=os.getenv(
+        "TYPER_PRETTY_EXCEPTIONS", "True"
+    ) == "True",
 )
 console = Console()
 job_timer = Timer()
@@ -51,9 +55,10 @@ def run(
     > run Job:HelloWorld arg1 arg2 kwarg1=value1 kwarg2=value2
     """
     job_plans: List[JobPlan] = job_context
+    settings = Settings()
     for plan in job_plans:
         try:
-            plan.job = eval(plan.name)()
+            plan.job = eval(plan.name)(settings)
         except NameError as e:
             logger.error(f"Job[{plan.name}] is not found.")
             raise typer.Abort()

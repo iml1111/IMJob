@@ -6,13 +6,9 @@ from controller.job.util import convert_param
 
 class HelloWorld(Job):
 
-    def __init__(self):
-        super().__init__()
-        self.goodbye = "Goodbye World!"
-
     async def run(self, name: str = 'IML'):
         logger.info(f"Hello World and {name}!")
-        logger.info(self.goodbye)
+        logger.info(f"It's {self.settings.app_name}!")
 
 
 class SlowWork(Job):
