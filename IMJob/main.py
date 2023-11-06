@@ -34,7 +34,12 @@ logger_format = (
     " <level>{message}</level>"
 )
 logger.remove()
-logger.add(sys.stdout, format=logger_format)
+logger.add(
+    sys.stdout, 
+    format=logger_format, 
+    filter= lambda x: x["level"].name != "ERROR"
+)
+logger.add(sys.stderr, format=logger_format, level="ERROR")
 
 
 @app.command()

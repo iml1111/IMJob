@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 
 __AUTHOR__ = "IML"
-__VERSION__ = "0.4.1"
+__VERSION__ = "0.4.2"
 
 APP_NAME = "IMJob"
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
